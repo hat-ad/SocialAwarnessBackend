@@ -71,11 +71,11 @@ router.patch("/api/user/:id", auth, upload.single("img"), async (req, res) => {
   try {
     const _id = req.params.id; // to get the id in url
     let response = "";
-    console.log(req.query.profImg);
-    if (req.query.profImg == "1") {
+    if (req.query.profImg === "1") {
       let bitmap = fs.readFileSync(
         path.join(__dirname, "../public/image/", req.file.filename)
       );
+      console.log(req.file);
 
       let file = new Buffer.from(bitmap).toString("base64");
       let img_file = `data:${req.file.mimetype};base64,${file}`;
@@ -86,7 +86,7 @@ router.patch("/api/user/:id", auth, upload.single("img"), async (req, res) => {
           new: true,
         }
       );
-      await fs.unlink(
+      fs.unlink(
         path.join(__dirname, "../public/image/", req.file.filename),
         () => {}
       );
