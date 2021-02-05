@@ -67,28 +67,19 @@ router.post("/api/users/get-token", async (req, res) => {
 });
 
 // query profimg 1 for profile update and 0 for others
-router.patch("/api/user/:id", auth, upload.single("img"), async (req, res) => {
+router.patch("/api/user/:id", auth, async (req, res) => {
   try {
     const _id = req.params.id; // to get the id in url
     let response = "";
     if (req.query.profImg === "1") {
-      let bitmap = fs.readFileSync(
-        path.join(__dirname, "../public/image/", req.file.filename)
-      );
-      console.log(req.file);
-
-      let file = new Buffer.from(bitmap).toString("base64");
-      let img_file = `data:${req.file.mimetype};base64,${file}`;
+      let file = req.files.img.data.toString("base64");
+      let img_file = `data:${req.files.img.mimetype};base64,${file}`;
       response = await RegisterUser.findByIdAndUpdate(
         _id,
         { profile_img: img_file },
         {
           new: true,
         }
-      );
-      fs.unlink(
-        path.join(__dirname, "../public/image/", req.file.filename),
-        () => {}
       );
     } else {
       response = await RegisterUser.findByIdAndUpdate(_id, req.body, {

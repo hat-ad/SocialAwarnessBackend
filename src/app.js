@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 require("../src/db/connection.js");
+const fileUpload = require("express-fileupload");
 
 const authRouter = require("./routers/auth.js");
 const postsRouter = require("./routers/posts.js");
@@ -11,6 +12,7 @@ require("./db/connection.js");
 const app = express();
 const port = process.env.PORT || 8000;
 
+app.use(fileUpload());
 app.use(express.json());
 app.use(cors());
 app.use(authRouter);

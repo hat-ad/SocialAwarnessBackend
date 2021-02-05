@@ -70,17 +70,14 @@ router.post(
   upload.single("uploadPostimg"),
   async (req, res) => {
     try {
-      let bitmap = fs.readFileSync(
-        path.join(__dirname, "../public/image/", req.file.filename)
-      );
-      let file = new Buffer.from(bitmap).toString("base64");
+      let file = req.files.img.data.toString("base64");
       const { title, content, createdBy, createdByID } = req.body;
       const causeDetail = new Cause({
         title,
         content,
         createdBy,
         media: file,
-        mediaType: req.file.mimetype,
+        mediaType: req.files.img.mimetype,
         createdByID: createdByID,
         dateCreated: getCurrentTime(),
       });
@@ -117,43 +114,32 @@ router.get("/api/ad", auth, async (req, res) => {
   });
 });
 
-router.post(
-  "/api/ad",
-  auth,
-  upload.single("uploadPostimg"),
-  async (req, res) => {
-    try {
-      let bitmap = fs.readFileSync(
-        path.join(__dirname, "../public/image/", req.file.filename)
-      );
+router.post("/api/ad", auth, async (req, res) => {
+  try {
+    let file = req.files.img.data.toString("base64");
 
-      let file = new Buffer.from(bitmap).toString("base64");
-      const { title, content, createdBy, createdByID } = req.body;
-      const adDetail = new Advertisement({
-        title,
-        content,
-        createdBy,
-        createdByID: createdByID,
-        media: file,
-        mediaType: req.file.mimetype,
-        dateCreated: getCurrentTime(),
-      });
+    // let file = new Buffer.from(bitmap).toString("base64");
+    const { title, content, createdBy, createdByID } = req.body;
+    const adDetail = new Advertisement({
+      title,
+      content,
+      createdBy,
+      createdByID: createdByID,
+      media: file,
+      mediaType: req.files.img.mimetype,
+      dateCreated: getCurrentTime(),
+    });
 
-      const response = await adDetail.save();
+    const response = await adDetail.save();
 
-      fs.unlink(
-        path.join(__dirname, "../public/image/", req.file.filename),
-        () => {}
-      );
-      res.status(201).json({
-        status: "Ad Created",
-        AD: response,
-      });
-    } catch (error) {
-      res.status(400).send(error);
-    }
+    res.status(201).json({
+      status: "Ad Created",
+      AD: response,
+    });
+  } catch (error) {
+    res.status(400).send(error);
   }
-);
+});
 
 router.get("/api/comment/:id", auth, async (req, res) => {
   // console.log(req.params);
