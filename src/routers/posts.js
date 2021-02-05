@@ -67,7 +67,7 @@ router.get("/api/cause", auth, async (req, res) => {
 router.post(
   "/api/cause",
   auth,
-  upload.single("uploadPostimg"),
+
   async (req, res) => {
     try {
       let file = req.files.img.data.toString("base64");
@@ -85,10 +85,6 @@ router.post(
       const response = await causeDetail.save();
       // const mediaResponse = await mediaAttached.save();
 
-      fs.unlink(
-        path.join(__dirname, "../public/image/", req.file.filename),
-        () => {}
-      );
       res.status(201).json({
         status: "Cause Created",
         cause: response,
