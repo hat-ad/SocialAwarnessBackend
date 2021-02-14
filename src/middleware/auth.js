@@ -15,7 +15,7 @@ const auth = async (req, res, next) => {
     async (err, payload) => {
       // console.log(payload);
       const { _id } = payload;
-      console.log(_id);
+      // console.log(_id);
       req.user = await User.findById(_id);
       next();
     }

@@ -65,6 +65,7 @@ router.get("/api/cause", auth, async (req, res) => {
 
 router.post("/api/cause", auth, async (req, res) => {
   try {
+    console.log(req.user);
     const { title, content, media, mediaType } = req.body;
     const causeDetail = new Cause({
       title,
@@ -83,6 +84,7 @@ router.post("/api/cause", auth, async (req, res) => {
       cause: response,
     });
   } catch (error) {
+    console.log(error);
     res.status(400).send(error);
   }
 });

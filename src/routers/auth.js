@@ -69,6 +69,8 @@ router.post("/api/users/get-token", async (req, res) => {
 router.patch("/api/user/:id", auth, async (req, res) => {
   try {
     const _id = req.params.id; // to get the id in url
+    const { username, ph_no, email, name, img } = req.body;
+    // console.log(req.body.img);
     let response = await RegisterUser.findByIdAndUpdate(_id, req.body, {
       new: true,
     });
