@@ -53,53 +53,39 @@ const upload = multer({
 router.get("/api/cause", auth, async (req, res) => {
   let query = {};
   // created by a particular user
-  if (req.query.id && req.query.user == 1)
-    query = { createdByID: req.query.id };
+  if (req.query.id && req.query.user == 1) query = { createdBy: req.query.id };
   //by post id
   else if (req.query.id && req.query.user == 0) query = { _id: req.query.id };
-  const response = await Cause.find(query);
+  const response = await Cause.find(query).populate("createdBy");
   res.json({
     status: "OK",
     cause: response,
   });
 });
 
-router.post(
-  "/api/cause",
-  auth,
+router.post("/api/cause", auth, async (req, res) => {
+  try {
+    const { title, content, media, mediaType } = req.body;
+    const causeDetail = new Cause({
+      title,
+      content,
+      createdBy: req.user,
+      media,
+      mediaType,
+      dateCreated: getCurrentTime(),
+    });
 
-  async (req, res) => {
-    try {
-      const {
-        title,
-        content,
-        media,
-        mediaType,
-        createdBy,
-        createdByID,
-      } = req.body;
-      const causeDetail = new Cause({
-        title,
-        content,
-        createdBy,
-        media,
-        mediaType,
-        createdByID: createdByID,
-        dateCreated: getCurrentTime(),
-      });
+    const response = await causeDetail.save();
+    // const mediaResponse = await mediaAttached.save();
 
-      const response = await causeDetail.save();
-      // const mediaResponse = await mediaAttached.save();
-
-      res.status(201).json({
-        status: "Cause Created",
-        cause: response,
-      });
-    } catch (error) {
-      res.status(400).send(error);
-    }
+    res.status(201).json({
+      status: "Cause Created",
+      cause: response,
+    });
+  } catch (error) {
+    res.status(400).send(error);
   }
-);
+});
 
 router.get("/api/ad", auth, async (req, res) => {
   let query = {};
@@ -108,7 +94,7 @@ router.get("/api/ad", auth, async (req, res) => {
     query = { createdByID: req.query.id };
   //by post id
   else if (req.query.id && req.query.user == 0) query = { _id: req.query.id };
-  const response = await Advertisement.find(query);
+  const response = await Advertisement.find(query).populate("createdBy");
 
   res.json({
     status: "OK",
@@ -118,17 +104,13 @@ router.get("/api/ad", auth, async (req, res) => {
 
 router.post("/api/ad", auth, async (req, res) => {
   try {
-    let file = req.files.img.data.toString("base64");
-
-    // let file = new Buffer.from(bitmap).toString("base64");
-    const { title, content, createdBy, createdByID } = req.body;
+    const { title, content, media, mediaType } = req.body;
     const adDetail = new Advertisement({
       title,
       content,
-      createdBy,
-      createdByID: createdByID,
-      media: file,
-      mediaType: req.files.img.mimetype,
+      createdBy: req.user,
+      media,
+      mediaType,
       dateCreated: getCurrentTime(),
     });
 
@@ -145,7 +127,9 @@ router.post("/api/ad", auth, async (req, res) => {
 
 router.get("/api/comment/:id", auth, async (req, res) => {
   // console.log(req.params);
-  const response = await Comment.find({ post_con: req.params.id });
+  const response = await Comment.find({ post_con: req.params.id }).populate(
+    "commented_by"
+  );
   res.json({
     status: "OK",
     comment: response,
@@ -154,9 +138,9 @@ router.get("/api/comment/:id", auth, async (req, res) => {
 
 router.post("/api/comment/", auth, async (req, res) => {
   try {
-    const { commented_by, desc, post_con } = req.body;
+    const { desc, post_con } = req.body;
     const comment = new Comment({
-      commented_by,
+      commented_by: req.user,
       desc,
       post_con,
       dateCreated: getCurrentTime(),
@@ -174,24 +158,15 @@ router.post("/api/comment/", auth, async (req, res) => {
 
 router.post("/api/volunteer", auth, async (req, res) => {
   try {
-    const {
-      name,
-      createdBy,
-      createdById,
-      ph_no,
-      location,
-      post,
-      postCreatorId,
-    } = req.body;
+    const { name, ph_no, location, post } = req.body;
 
+    const posts = await Cause.findOne({ _id: post });
     const volunteer = new Volunteer({
       name,
-      createdBy,
-      createdById,
+      createdBy: req.user,
       ph_no,
       location,
-      post,
-      postCreatorId,
+      post: posts,
       dateCreated: getCurrentTime(),
     });
 
@@ -209,14 +184,14 @@ router.post("/api/volunteer", auth, async (req, res) => {
 
 router.post("/api/lead", auth, async (req, res) => {
   try {
-    const { name, ph_no, post, createdById, createdBy } = req.body;
+    const { name, ph_no, post } = req.body;
+    const posts = await Advertisement.findOne({ _id: post });
 
     const lead = new Lead({
       name,
       ph_no,
-      post,
-      createdById,
-      createdBy,
+      post: posts,
+      createdBy: req.user,
       dateCreated: getCurrentTime(),
     });
 
@@ -234,32 +209,26 @@ router.post("/api/lead", auth, async (req, res) => {
 router.get("/api/volunteer", auth, async (req, res) => {
   let response = [];
   if (req.query.post == 1) {
-    response = await Volunteer.find({ postCreatorId: req.query.id });
+    // volunteers
+    response = await Volunteer.find({ post: req.query.id }).populate(
+      "createdBy post"
+    );
   } else {
-    response = await Volunteer.find({ createdById: req.query.id });
+    //volunteered
+    response = await Volunteer.find({ createdBy: req.query.id }).populate(
+      "createdBy post"
+    );
   }
-  let vposts = [];
 
-  await response.forEach(async (obj) => {
-    let x = await Cause.findOne({ _id: obj.post });
-    vposts.push(x);
-  });
-  setTimeout(() => {
-    res.json({ volunteer: response, posts: vposts });
-  }, 500);
+  res.json({ volunteer: response });
 });
 
 router.get("/api/lead", auth, async (req, res) => {
-  const response = await Lead.find({ createdById: req.query.id });
-  let Lposts = [];
+  const response = await Lead.find({ createdBy: req.query.id }).populate(
+    "createdBy post"
+  );
 
-  await response.forEach(async (obj) => {
-    let x = await Advertisement.find({ _id: obj.post });
-    Lposts.push(x);
-  });
-  setTimeout(() => {
-    res.json({ lead: response, posts: Lposts });
-  }, 500);
+  res.json({ lead: response });
 });
 
 router.post("/api/appreciate/:id", auth, async (req, res) => {
@@ -305,8 +274,8 @@ router.get("/api/user/:id", auth, async (req, res) => {
   else res.send("no user");
 });
 
-// router.post("/api/test", auth, (req, res) => {
-//   const { title, content, createdBy, createdByID } = req.body;
-//   res.send(title);
-// });
+router.post("/api/test", auth, (req, res) => {
+  const { title, content, createdBy, createdByID } = req.body;
+  res.send(title);
+});
 module.exports = router;

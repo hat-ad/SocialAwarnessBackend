@@ -3,11 +3,9 @@ const mongoose = require("mongoose");
 //registration form schema
 const comment = new mongoose.Schema({
   commented_by: {
-    name: { type: String, required: true },
-    prof_img: {
-      type: String,
-      required: true,
-    },
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
   },
   desc: {
     type: String,

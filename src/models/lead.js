@@ -11,15 +11,13 @@ const leadSchema = new mongoose.Schema({
     unique: true,
   },
   createdBy: {
-    type: String,
-    required: true,
-  },
-  createdById: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
   post: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Advertisement",
     required: true,
   },
   dateCreated: {

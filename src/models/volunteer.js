@@ -7,11 +7,8 @@ const volunteerSchema = new mongoose.Schema({
     required: true,
   },
   createdBy: {
-    type: String,
-    required: true,
-  },
-  createdById: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
   ph_no: {
@@ -21,11 +18,8 @@ const volunteerSchema = new mongoose.Schema({
     type: String,
   },
   post: {
-    type: String,
-    required: true,
-  },
-  postCreatorId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Cause",
     required: true,
   },
   dateCreated: {

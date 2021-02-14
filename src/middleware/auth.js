@@ -1,6 +1,6 @@
 const { request } = require("http");
 const jwt = require("jsonwebtoken");
-const MensRanking = require("../models/mens");
+const User = require("../models/user");
 
 const auth = async (req, res, next) => {
   const { authorization } = req.headers;
@@ -9,9 +9,16 @@ const auth = async (req, res, next) => {
   }
 
   const token = authorization.replace("Bearer ", "");
-  const verify = jwt.verify(token, process.env.SECRET_KEY, (err, payload) => {
-    // console.log(payload);
-    next();
-  });
+  const verify = jwt.verify(
+    token,
+    process.env.SECRET_KEY,
+    async (err, payload) => {
+      // console.log(payload);
+      const { _id } = payload;
+      console.log(_id);
+      req.user = await User.findById(_id);
+      next();
+    }
+  );
 };
 module.exports = auth;
