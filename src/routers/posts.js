@@ -70,14 +70,20 @@ router.post(
 
   async (req, res) => {
     try {
-      let file = req.files.img.data.toString("base64");
-      const { title, content, createdBy, createdByID } = req.body;
+      const {
+        title,
+        content,
+        media,
+        mediaType,
+        createdBy,
+        createdByID,
+      } = req.body;
       const causeDetail = new Cause({
         title,
         content,
         createdBy,
-        media: file,
-        mediaType: req.files.img.mimetype,
+        media,
+        mediaType,
         createdByID: createdByID,
         dateCreated: getCurrentTime(),
       });
