@@ -42,6 +42,7 @@ router.post("/api/register", async (req, res) => {
       token: token,
     });
   } catch (error) {
+    console.log(error);
     res.status(400).send(error);
   }
 });
@@ -77,13 +78,14 @@ router.post("/api/users/get-token", async (req, res) => {
 router.patch("/api/user/:id", auth, async (req, res) => {
   try {
     const _id = req.params.id; // to get the id in url
-    const { username, ph_no, email, name, img } = req.body;
-    // console.log(req.body.img);
+    // const { username, ph_no, email, name, img } = req.body;
+    // console.log(req.body);
     let response = await RegisterUser.findByIdAndUpdate(_id, req.body, {
       new: true,
     });
     res.status(200).send(response);
   } catch (e) {
+    console.log(e);
     res.status(500).send(e);
   }
 });

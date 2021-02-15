@@ -16,11 +16,10 @@ const userSchema = new mongoose.Schema({
   },
   username: {
     type: String,
-    unique: true,
     default: "",
   },
   ph_no: {
-    type: Number,
+    type: String,
     default: "",
   },
   password: {

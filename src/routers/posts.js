@@ -56,7 +56,9 @@ router.get("/api/cause", auth, async (req, res) => {
   if (req.query.id && req.query.user == 1) query = { createdBy: req.query.id };
   //by post id
   else if (req.query.id && req.query.user == 0) query = { _id: req.query.id };
-  const response = await Cause.find(query).populate("createdBy");
+  const response = await Cause.find(query)
+    .populate("createdBy")
+    .sort({ created_at: -1 });
   res.json({
     status: "OK",
     cause: response,
@@ -65,7 +67,7 @@ router.get("/api/cause", auth, async (req, res) => {
 
 router.post("/api/cause", auth, async (req, res) => {
   try {
-    console.log(req.user);
+    // console.log(req.user);
     const { title, content, media, mediaType } = req.body;
     const causeDetail = new Cause({
       title,
@@ -96,7 +98,9 @@ router.get("/api/ad", auth, async (req, res) => {
     query = { createdByID: req.query.id };
   //by post id
   else if (req.query.id && req.query.user == 0) query = { _id: req.query.id };
-  const response = await Advertisement.find(query).populate("createdBy");
+  const response = await Advertisement.find(query)
+    .populate("createdBy")
+    .sort({ created_at: -1 });
 
   res.json({
     status: "OK",
@@ -270,8 +274,8 @@ router.get("/api/user/:id", auth, async (req, res) => {
       img: response.profile_img,
       name: response.name,
       email: response.email,
-      username: response.username || null,
-      contact: response.ph_no || null,
+      username: response.username || "",
+      contact: response.ph_no || "",
     });
   else res.send("no user");
 });
