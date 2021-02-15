@@ -27,8 +27,13 @@ const upload = multer({
 //creating a user
 router.post("/api/register", async (req, res) => {
   try {
+    const userDetail = await RegisterUser.findOne({ email: req.body.email });
+    if (userDetail) {
+      return res.status(404).json({ error: "user exist" });
+    }
+
     const user = new RegisterUser(req.body);
-    console.log(user);
+    // console.log(user);
     const response = await user.save();
     const token = await user.generateAuthToken();
     res.status(201).json({
@@ -45,6 +50,9 @@ router.post("/api/register", async (req, res) => {
 router.post("/api/users/get-token", async (req, res) => {
   try {
     const userDetail = await RegisterUser.findOne({ email: req.body.email });
+    if (userDetail) {
+      return res.status(404).json({ error: "user does not exist" });
+    }
     const isMatch = await bcrypt.compare(
       req.body.password,
       userDetail.password
@@ -58,7 +66,7 @@ router.post("/api/users/get-token", async (req, res) => {
         userId: userDetail._id,
       });
     } else {
-      res.send("Invalid User Details");
+      res.status(401).json({ error: "email or password is incorrect" });
     }
     console.log(token);
   } catch (error) {
