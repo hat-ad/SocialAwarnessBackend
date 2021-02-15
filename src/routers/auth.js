@@ -28,7 +28,7 @@ const upload = multer({
 router.post("/api/register", async (req, res) => {
   try {
     const userDetail = await RegisterUser.findOne({ email: req.body.email });
-    if (userDetail) {
+    if (!userDetail) {
       return res.status(404).json({ error: "user exist" });
     }
 
