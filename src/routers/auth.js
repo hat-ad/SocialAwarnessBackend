@@ -50,7 +50,7 @@ router.post("/api/register", async (req, res) => {
 router.post("/api/users/get-token", async (req, res) => {
   try {
     const userDetail = await RegisterUser.findOne({ email: req.body.email });
-    if (userDetail) {
+    if (!userDetail) {
       return res.status(404).json({ error: "user does not exist" });
     }
     const isMatch = await bcrypt.compare(
