@@ -94,8 +94,7 @@ router.post("/api/cause", auth, async (req, res) => {
 router.get("/api/ad", auth, async (req, res) => {
   let query = {};
   // created by a particular user
-  if (req.query.id && req.query.user == 1)
-    query = { createdByID: req.query.id };
+  if (req.query.id && req.query.user == 1) query = { createdBy: req.query.id };
   //by post id
   else if (req.query.id && req.query.user == 0) query = { _id: req.query.id };
   const response = await Advertisement.find(query)
