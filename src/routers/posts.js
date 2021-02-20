@@ -9,7 +9,7 @@ const Volunteer = require("../models/volunteer");
 const Lead = require("../models/lead");
 const Comment = require("../models/comment");
 
-const auth = require("../middleware/auth");
+const {auth,adminAuth} = require("../middleware/auth");
 const User = require("../models/user");
 const path = require("path");
 
@@ -286,4 +286,35 @@ router.post("/api/test", auth, (req, res) => {
   const { title, content, createdBy, createdByID } = req.body;
   res.send(title);
 });
+
+router.patch("/api/cause/:id",adminAuth,(req,res)=>{
+  try {
+    const _id = req.params.id; // to get the id in url
+    // const { username, ph_no, email, name, img } = req.body;
+    console.log(req.body);
+    let response = await Cause.findByIdAndUpdate(_id, {isApproved:req.isApproved}, {
+      new: true,
+    });
+    res.status(200).send(response);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send(e);
+  }
+})
+
+
+router.patch("/api/ad/:id",adminAuth,(req,res)=>{
+  try {
+    const _id = req.params.id; // to get the id in url
+    // const { username, ph_no, email, name, img } = req.body;
+    console.log(req.body);
+    let response = await Advertisement.findByIdAndUpdate(_id, {isApproved:req.isApproved}, {
+      new: true,
+    });
+    res.status(200).send(response);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send(e);
+  }
+})
 module.exports = router;

@@ -38,6 +38,10 @@ const adSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    isApproved: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: { createdAt: "created_at" } }
 );

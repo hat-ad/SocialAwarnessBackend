@@ -38,6 +38,10 @@ const causeSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isApproved: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: { createdAt: "created_at" } }
 );
