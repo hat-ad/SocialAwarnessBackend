@@ -65,6 +65,7 @@ router.post("/api/users/get-token", async (req, res) => {
         status: "user logged in",
         token: token,
         userId: userDetail._id,
+        isAdmin: userDetail.isAdmin,
       });
     } else {
       res.status(401).json({ error: "email or password is incorrect" });
