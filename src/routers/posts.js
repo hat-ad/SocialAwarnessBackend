@@ -298,13 +298,9 @@ router.patch("/api/cause/:id", adminAuth, async (req, res) => {
     const _id = req.params.id; // to get the id in url
     // const { username, ph_no, email, name, img } = req.body;
     console.log(req.body);
-    let response = await Cause.findByIdAndUpdate(
-      _id,
-      { isApproved: req.isApproved },
-      {
-        new: true,
-      }
-    );
+    let response = await Cause.findByIdAndUpdate(_id, req.body, {
+      new: true,
+    });
     res.status(200).send(response);
   } catch (e) {
     console.log(e);
@@ -314,19 +310,15 @@ router.patch("/api/cause/:id", adminAuth, async (req, res) => {
 
 router.patch("/api/ad/:id", adminAuth, async (req, res) => {
   try {
-    if (!req.isAdmin) {
+    if (!req.admin.isAdmin) {
       return res.status(404).send("user is not admin");
     }
     const _id = req.params.id; // to get the id in url
     // const { username, ph_no, email, name, img } = req.body;
     console.log(req.body);
-    let response = await Advertisement.findByIdAndUpdate(
-      _id,
-      { isApproved: req.isApproved },
-      {
-        new: true,
-      }
-    );
+    let response = await Advertisement.findByIdAndUpdate(_id, req.body, {
+      new: true,
+    });
     res.status(200).send(response);
   } catch (e) {
     console.log(e);
