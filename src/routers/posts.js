@@ -215,9 +215,12 @@ router.get("/api/volunteer", auth, async (req, res) => {
   let response = [];
   if (req.query.post == 1) {
     // volunteers
-    response = await Volunteer.find({ post: req.query.id }).populate(
-      "createdBy post"
+    response = await Volunteer.find({}).populate("createdBy post");
+    // console.log(req.user._id);
+    response = response.filter(
+      (obj) => obj.post.createdBy.toString() === req.user._id.toString()
     );
+    // console.log(req.user._id);
   } else {
     //volunteered
     response = await Volunteer.find({ createdBy: req.query.id }).populate(
