@@ -9,7 +9,9 @@ const Volunteer = require("../models/volunteer");
 const Lead = require("../models/lead");
 const Comment = require("../models/comment");
 
-const { auth, adminAuth } = require("../middleware/auth");
+const auth = require("../middleware/auth");
+const adminAuth = require("../middleware/adminAuth");
+
 const User = require("../models/user");
 const path = require("path");
 

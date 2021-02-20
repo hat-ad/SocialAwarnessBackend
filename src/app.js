@@ -14,15 +14,15 @@ const port = process.env.PORT || 8000;
 
 app.use(fileUpload());
 app.use(express.json());
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  // res.append("Access-Control-Allow-Methods", "GET,PATCH,POST,DELETE");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin,X-Requested-With,Content-Type,Accept"
-  );
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   // res.append("Access-Control-Allow-Methods", "GET,PATCH,POST,DELETE");
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "Origin,X-Requested-With,Content-Type,Accept"
+//   );
+//   next();
+// });
 app.use(cors());
 app.use(authRouter);
 app.use(postsRouter);
