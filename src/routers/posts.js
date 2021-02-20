@@ -291,7 +291,8 @@ router.post("/api/test", auth, (req, res) => {
 
 router.patch("/api/cause/:id", adminAuth, async (req, res) => {
   try {
-    if (!req.isAdmin) {
+    console.log(req.admin.isAdmin);
+    if (!req.admin.isAdmin) {
       return res.status(404).send("user is not admin");
     }
     const _id = req.params.id; // to get the id in url
