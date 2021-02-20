@@ -9,7 +9,7 @@ const Volunteer = require("../models/volunteer");
 const Lead = require("../models/lead");
 const Comment = require("../models/comment");
 
-const {auth,adminAuth} = require("../middleware/auth");
+const { auth, adminAuth } = require("../middleware/auth");
 const User = require("../models/user");
 const path = require("path");
 
@@ -287,34 +287,47 @@ router.post("/api/test", auth, (req, res) => {
   res.send(title);
 });
 
-router.patch("/api/cause/:id",adminAuth,(req,res)=>{
+router.patch("/api/cause/:id", adminAuth, async (req, res) => {
   try {
+    if (!req.isAdmin) {
+      return res.status(404).send("user is not admin");
+    }
     const _id = req.params.id; // to get the id in url
     // const { username, ph_no, email, name, img } = req.body;
     console.log(req.body);
-    let response = await Cause.findByIdAndUpdate(_id, {isApproved:req.isApproved}, {
-      new: true,
-    });
+    let response = await Cause.findByIdAndUpdate(
+      _id,
+      { isApproved: req.isApproved },
+      {
+        new: true,
+      }
+    );
     res.status(200).send(response);
   } catch (e) {
     console.log(e);
     res.status(500).send(e);
   }
-})
+});
 
-
-router.patch("/api/ad/:id",adminAuth,(req,res)=>{
+router.patch("/api/ad/:id", adminAuth, async (req, res) => {
   try {
+    if (!req.isAdmin) {
+      return res.status(404).send("user is not admin");
+    }
     const _id = req.params.id; // to get the id in url
     // const { username, ph_no, email, name, img } = req.body;
     console.log(req.body);
-    let response = await Advertisement.findByIdAndUpdate(_id, {isApproved:req.isApproved}, {
-      new: true,
-    });
+    let response = await Advertisement.findByIdAndUpdate(
+      _id,
+      { isApproved: req.isApproved },
+      {
+        new: true,
+      }
+    );
     res.status(200).send(response);
   } catch (e) {
     console.log(e);
     res.status(500).send(e);
   }
-})
+});
 module.exports = router;
